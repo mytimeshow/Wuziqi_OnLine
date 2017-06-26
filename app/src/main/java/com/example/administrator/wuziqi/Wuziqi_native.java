@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,18 +18,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.UpdateListener;
-
 /**
  * Created by Administrator on 2017/6/8 0008.
  */
 
-public class Wuziqi extends View {
-    Match match;
+public class Wuziqi_native extends View {
 
+    private ArrayList<Point> wlite = new ArrayList<>();
+    private ArrayList<Point> black = new ArrayList<>();
     private int lineWidth;
     private float lineHeight;
     private int MAX_LINE = 10;
@@ -41,26 +36,22 @@ public class Wuziqi extends View {
     private Bitmap balckPiece;
     private float radioPieceOfLineHeight = 3 * 1.0f / 4;
     private boolean IsWilte = true;
-    private ArrayList<Point> wlite = new ArrayList<>();
-    private ArrayList<Point> black = new ArrayList<>();
+
     private boolean IsgameOver;
     private boolean Iswhitewinner;
     private int MAX_IN_LINE = 5;
     private String objectId;
     private Canvas canve=new Canvas();
-    private Handler handle;
+
 //    private BmobRealTimeData rtd = new BmobRealTimeData();
 
 
-    public Wuziqi(Context context, AttributeSet attrs) {
+    public Wuziqi_native(Context context, AttributeSet attrs) {
         super(context, attrs);
         setBackgroundColor(0x44ff0000);
         initPaint();
     }
 
-    public void initMatch(Match a) {
-        match = a;
-    }
 
     private void initPaint() {
         mpaint = new Paint();
@@ -123,35 +114,12 @@ public class Wuziqi extends View {
             if (IsWilte) {
 //                initWhite();
                 wlite.add(p);
-                if(match==null){
-                    return false;
-                }
 
-                match.setWhiteArray(wlite);
-                match.update(objectId, new UpdateListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e != null) {
-                            Log.e("AAA", e.toString());
-                        } else {
-                            Log.e("AAA", "update success");
-                        }
-                    }
-                });
 
             } else {
 //                initblack();
                 black.add(p);
-                if(match==null){
-                    return false;
-                }
-                match.setBlackArray(black);
-                match.update(objectId, new UpdateListener() {
-                    @Override
-                    public void done(BmobException e) {
 
-                    }
-                });
             }
             invalidate();
             IsWilte = !IsWilte;
@@ -159,100 +127,12 @@ public class Wuziqi extends View {
         return true;
     }
 
-    private void initblack() {
-        BmobQuery<Match> query = new BmobQuery<>();
-        query.addQueryKeys("blackArray");
-        query.findObjects(new FindListener<Match>() {
-            @Override
-            public void done(List<Match> list, BmobException e) {
-                if (e== null) {
-                    int index = list.size() - 1;
-                    black = (ArrayList<Point>) list.get(index).getBlackArray();
-
-                }
-
-
-            }
-        });
-    }
-
-    private void initWhite() {
-        BmobQuery<Match> query = new BmobQuery<>();
-        query.addQueryKeys("whiteArray");
-        query.findObjects(new FindListener<Match>() {
-            @Override
-            public void done(List<Match> list, BmobException e) {
-                if (e== null) {
-                    int index = list.size() - 1;
-                    wlite = (ArrayList<Point>) list.get(index).getWhiteArray();
-
-                }
-            }
-        });
-    }
-
-//    public void queryId() {
-//        BmobQuery<Match> query = new BmobQuery<>();
-//        query.addQueryKeys("objectId");
-//        query.findObjects(new FindListener<Match>() {
-//            @Override
-//
-//            public void done(List<Match> list, BmobException e) {
-//                if (e== null) {
-//                    int index = list.size() - 1;
-//                    objectId = list.get(index).getObjectId();
-//                }
-//
-//            }
-//        });
-//
-//
-//    }
-
-
-//    public void unregisterLisenner(){
-//        rtd.unsubRowUpdate("Match", objectId);
-//    }
-
-  public  void tongbuliangbianqizi(final Context context,String id) {
-        BmobQuery<Match> query = new BmobQuery<>();
-        query.addWhereEqualTo("objectId",id);
-        query.findObjects(new FindListener<Match>() {
-            @Override
-            public void done(List<Match> list, BmobException e) {
-                if (e== null) {
-
-                    int index = list.size() - 1;
-                    wlite.clear();
-                    black.clear();
-                    wlite.addAll(list.get(index).getWhiteArray());
-                    black.addAll(list.get(index).getBlackArray());
-                    invalidate();
-                    Toast.makeText(context, "datachange", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
 
 
 
 
-    }
-    public void blacklisenner() {
-        BmobQuery<Match> query = new BmobQuery<>();
-        query.addQueryKeys("blackArray");
-        query.findObjects(new FindListener<Match>() {
-            @Override
-            public void done(List<Match> list, BmobException e) {
-                if (e== null) {
-                    int index = list.size() - 1;
-                    black = (ArrayList<Point>) list.get(index).getBlackArray();
-
-                }
 
 
-            }
-        });
-    }
 
     private Point getPoint(int x, int y) {
 
@@ -463,24 +343,7 @@ public class Wuziqi extends View {
 
     }
 
-    public void netReatart() {
-        black.clear();
-        wlite.clear();
-        Iswhitewinner = false;
-        IsgameOver = false;
 
-        invalidate();
-
-        match.setBlackArray(black);
-        match.setWhiteArray(wlite);
-        match.update(objectId, new UpdateListener() {
-            @Override
-            public void done(BmobException e) {
-
-            }
-        });
-
-    }
 
     private static final String INSTANCE = "intance";
     private static final String INSTANCE_GAMEOVER = "intance_gameover";

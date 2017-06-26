@@ -6,16 +6,33 @@
     android:layout_height="match_parent"
 
     tools:context="com.example.administrator.wuziqi.MainActivity">
-    <Button
-        android:text="再来一局"
-        android:id="@+id/btn_again"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.example.administrator.wuziqi.Wuziqi
-        android:id="@+id/wuziqi"
+    <LinearLayout
         android:layout_centerInParent="true"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="wrap_content">
+
+
+
+        <Button
+            android:text="本地棋局"
+            android:id="@+id/btn_native"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+        <Button
+
+            android:text="联网棋局"
+            android:id="@+id/btn_online"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+
+
+
 </RelativeLayout>
